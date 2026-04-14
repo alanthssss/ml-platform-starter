@@ -24,13 +24,13 @@ func New(svc service.PredictService, log *zap.Logger) *Handler {
 // Healthz returns 200 OK for liveness checks.
 func (h *Handler) Healthz(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("ok"))
+	_, _ = w.Write([]byte("ok"))
 }
 
 // Readyz returns 200 OK when the service is ready.
 func (h *Handler) Readyz(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("ok"))
+	_, _ = w.Write([]byte("ok"))
 }
 
 // Predict accepts a JSON body, calls Triton, and returns the result.
@@ -61,5 +61,7 @@ func (h *Handler) Predict(w http.ResponseWriter, r *http.Request) {
 	metrics.PredictionsTotal.Inc()
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(resp)
+	if err := json.NewEncoder(w).Encode(resp); err != nil {
+		h.log.Error("encode response failed", zap.Error(err))
+	}
 }
