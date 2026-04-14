@@ -58,7 +58,9 @@ func TestPredict_OK(t *testing.T) {
 		t.Fatalf("expected 200, got %d", rr.Code)
 	}
 	var resp service.PredictResponse
-	json.NewDecoder(rr.Body).Decode(&resp)
+	if err := json.NewDecoder(rr.Body).Decode(&resp); err != nil {
+		t.Fatalf("failed to decode response: %v", err)
+	}
 	if resp.Label != "setosa" {
 		t.Errorf("expected setosa, got %s", resp.Label)
 	}
