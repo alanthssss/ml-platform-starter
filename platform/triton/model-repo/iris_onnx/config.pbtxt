@@ -1,0 +1,31 @@
+name: "iris_onnx"
+backend: "onnxruntime"
+max_batch_size: 32
+
+input [
+  {
+    name: "float_input"
+    data_type: TYPE_FP32
+    dims: [ 4 ]
+  }
+]
+
+output [
+  {
+    name: "output_label"
+    data_type: TYPE_INT64
+    dims: [ 1 ]
+  },
+  {
+    name: "output_probability"
+    data_type: TYPE_FP32
+    dims: [ -1 ]
+  }
+]
+
+instance_group [
+  {
+    count: 1
+    kind: KIND_CPU
+  }
+]
